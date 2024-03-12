@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cidade {
+  id         String  @id @default(uuid())
+  nomeCidade String
+  Aluno      Aluno[]
+
+  @@map("cidades")
+}
+
+model Aluno {
+  id         String   @id @default(uuid())
+  matricula  Int
+  nomeAluno  String
+  cpf        String
+  rg         String
+  endereco   String
+  nascimento DateTime
+
+  cidade   Cidade @relation(fields: [cidadeId], references: [id])
+  cidadeId String
+
+  curso   Curso  @relation(fields: [cursoId], references: [id])
+  cursoId String
+
+  @@map("alunos")
+}
+
+model Curso {
+  id        String  @id @default(uuid())
+  nomeCurso String
+  periodo   String
+  horario   Horario @relation(fields: [horarioId], references: [id])
+
+  Aluno     Aluno[]
+  horarioId String
+
+  @@map("cursos")
+}
+
+model Horario {
+  id          String  @id @default(uuid())
+  horaInicio  String
+  horaTermino String
+  descricao   String
+  Curso       Curso[]
+
+  @@map("horarios")
+}
